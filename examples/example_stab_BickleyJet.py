@@ -1,5 +1,4 @@
 from __future__ import division
-from past.utils import old_div
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.linalg as spalg
@@ -53,24 +52,24 @@ sim.initialize()
 # Define Differentiation Matrix and grid
 Dy,y = cheb(sim.Ny)
 y   = (y[:,0]+1)*sim.Ly/2
-Dy = Dy*(old_div(2,sim.Ly))
+Dy = Dy*(2/sim.Ly)
 
 # Define Basic State: Bickley Jet
 Ljet = 20e3            # Jet width
 Umax = 0.5             # Maximum speed
 amp  = Umax*sim.f0*Ljet/sim.g    # Elevation of free-surface in basic state
-sim.UB  =  sim.g*amp/(sim.f0*Ljet)/(np.cosh(old_div((y-old_div(sim.Ly,2.)),Ljet))**2)
-sim.HB  = sim.Hs[0] - amp*np.tanh(old_div((y-old_div(sim.Ly,2.)),Ljet))
-sim.dUB = np.dot(Dy,sim.UB) 
+sim.UB  =  sim.g*amp/(sim.f0*Ljet)/(np.cosh((y-sim.Ly/2.)/Ljet)**2)
+sim.HB  = sim.Hs[0] - amp*np.tanh((y-sim.Ly/2.)/Ljet)
+sim.dUB = np.dot(Dy,sim.UB)
 
 # Test Geostrophy
 #if np.amax(sim.f0*sim.UB+sim.g*np.dot(Dy,sim.HB)) > 1e-10:
 #    print "Geostrophic balance not satisfied.  Exit"
-#    sys.exit()    
+#    sys.exit()
 
 ## Specify wavenumber
 dkk = 2e-2
-kk = old_div(np.arange(dkk,2+dkk,dkk),Ljet)
+kk = np.arange(dkk,2+dkk,dkk)/Ljet
 Nk = len(kk)
 
 ## Storage Arrays
@@ -89,6 +88,3 @@ plt.xlabel('k*Ljet')
 plt.title('Growth Rates for Bickley Jet')
 plt.legend(['1st unstable','2nd unstable'])
 plt.show()
-
-
-

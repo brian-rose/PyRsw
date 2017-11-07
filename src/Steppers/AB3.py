@@ -1,6 +1,5 @@
 from __future__ import absolute_import
 from __future__ import division
-from past.utils import old_div
 import numpy as np
 from .Euler import Euler
 from .AB2 import AB2
@@ -35,17 +34,17 @@ def AB3(sim):
             a  = sim.time - sim.dts[0]
             b  = sim.time - sim.dts[0] - sim.dts[1]
 
-            w0 = sim.dt*((old_div(1.,3))*gam1 - 0.5*gam2*(a+b) + a*b*gam3) / (sim.dts[0]*(sim.dts[0]+sim.dts[1]))
+            w0 = sim.dt*((1./3)*gam1 - 0.5*gam2*(a+b) + a*b*gam3) / (sim.dts[0]*(sim.dts[0]+sim.dts[1]))
 
             a  = sim.time
             b  = sim.time - sim.dts[0] - sim.dts[1]
 
-            w1 = sim.dt*((old_div(1.,3))*gam1 - 0.5*gam2*(a+b) + a*b*gam3) / (-sim.dts[0]*sim.dts[1])
+            w1 = sim.dt*((1./3)*gam1 - 0.5*gam2*(a+b) + a*b*gam3) / (-sim.dts[0]*sim.dts[1])
 
             a  = sim.time
             b  = sim.time - sim.dts[0]
 
-            w2 = sim.dt*((old_div(1.,3))*gam1 - 0.5*gam2*(a+b) + a*b*gam3) / ((sim.dts[0]+sim.dts[1])*sim.dts[1])
+            w2 = sim.dt*((1./3)*gam1 - 0.5*gam2*(a+b) + a*b*gam3) / ((sim.dts[0]+sim.dts[1])*sim.dts[1])
         else:
             # Compute the weights for the fixed delta(t)
             # Adams-Bashforth 3 scheme
@@ -57,7 +56,7 @@ def AB3(sim):
         sim.soln.u += w0*sim.curr_flux.u + w1*sim.fluxes.u[0] + w2*sim.fluxes.u[1]
         sim.soln.v += w0*sim.curr_flux.v + w1*sim.fluxes.v[0] + w2*sim.fluxes.v[1]
         sim.soln.h += w0*sim.curr_flux.h + w1*sim.fluxes.h[0] + w2*sim.fluxes.h[1]
-        
+
         # Store the appropriate histories.
         if sim.nfluxes == 2:
             sim.fluxes.u = [sim.curr_flux.u.copy(), sim.fluxes.u[0].copy()]

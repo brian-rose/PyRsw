@@ -2,7 +2,6 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
 from builtins import range
-from past.utils import old_div
 from . import Differentiation as Diff
 import numpy as np
 import sys
@@ -24,7 +23,7 @@ import sys
 #      |           |          |         |
 #      |           |          |         |
 #      h --  u --  h  -- u -- h -- u -- h --
-#      |           |          |         | 
+#      |           |          |         |
 #      |           |          |         |
 #      v     q     v     q    v    q    v
 #      |           |          |         |
@@ -36,7 +35,7 @@ import sys
 # If Periodic X Walls:  u,h: Nx by (Ny+1) and
 #                         v: Nx by Ny
 # If Walls X Periodic:  v,h: (Nx+1) by Ny and
-#                         u: Nx by Ny      
+#                         u: Nx by Ny
 #
 # N,S rows:
 # -> must advance u,h
@@ -56,7 +55,7 @@ def sadourny_sw_flux(sim):
 
     Nx, Ny, Nz = sim.Nx, sim.Ny, sim.Nz
     dx, dy     = sim.dx[0], sim.dx[1]
-    
+
     # Loop through each layer and compute the flux
     for ii in range(Nz):
 
@@ -66,10 +65,10 @@ def sadourny_sw_flux(sim):
         v = sim.soln.v[:,:,ii]
 
         # Compute secondary varibles
-        U = sim.avx_h(h)*u                  
+        U = sim.avx_h(h)*u
         V = sim.avy_h(h)*v
         B = sim.gs[ii]*h + 0.5*(sim.avx_u(u**2) + sim.avy_v(v**2))
-        q = old_div((sim.ddx_v(v,dx) - sim.ddy_u(u,dy)  + sim.F),(sim.avy_u(sim.avx_h(h))))  
+        q = (sim.ddx_v(v,dx) - sim.ddy_u(u,dy)  + sim.F)/(sim.avy_u(sim.avx_h(h)))
 
         # Flux
         #sim.curr_flux.u[:,:,ii] =   sim.avy_v(q*sim.avx_v(V)) - sim.ddx_h(B,dx)
@@ -86,7 +85,7 @@ def sadourny_sw_linear_flux(sim):
     #ddx, ddy   = sim.ddx, sim.ddy
     #avx, avy   = sim.avx, sim.avy
     Hs         = sim.Hs[0]
-    
+
     # Loop through each layer and compute the flux
     for ii in range(sim.Nz):
 
@@ -96,9 +95,9 @@ def sadourny_sw_linear_flux(sim):
         v = sim.soln.v[:,:,ii]
 
         # Compute secondary varibles
-        U = Hs*u             
+        U = Hs*u
         V = Hs*v
-        q = old_div(sim.F,Hs)
+        q = sim.F/Hs
         B = sim.gs[ii]*h
 
         # Flux
@@ -120,7 +119,7 @@ def sadourny_sw(sim):
             sim.Nkx = sim.Nx
         elif sim.geomx == 'walls':
             sim.Nkx = 2*sim.Nx
-            
+
     if sim.Ny == 1:
         sim.Nky = 1
     else:
@@ -139,4 +138,3 @@ def sadourny_sw(sim):
     else:
         print("dynamics must be from the list: Nonlinear, Linear")
         sys.exit()
-            

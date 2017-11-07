@@ -1,6 +1,5 @@
 from __future__ import division
 from builtins import range
-from past.utils import old_div
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -14,15 +13,15 @@ def initialize_plots_hov(sim):
     Qs = []
 
     # Plot h
-    t = old_div(np.arange(0,sim.end_time+sim.plott,sim.plott),86400.)
+    t = np.arange(0,sim.end_time+sim.plott,sim.plott)/86400.
 
     for L in range(sim.Nz):
         plt.subplot(sim.Nz,1,L+1)
         if sim.Nx > 1:
-            x = old_div(sim.x,1e3)
+            x = sim.x/1e3
             plt.xlabel('x (km)')
         if sim.Ny > 1:
-            x = old_div(sim.y,1e3)
+            x = sim.y/1e3
             plt.xlabel('y (km)')
         Q = plt.pcolormesh(x,t,sim.hov_h[:,L,:].T - np.sum(sim.Hs[L:]),cmap=sim.cmap)
         sim.vmin = list(range(sim.Nz))
@@ -34,7 +33,7 @@ def initialize_plots_hov(sim):
             tmp = np.max(np.abs(sim.hov_h[:,L,0] - np.sum(sim.Hs[L:])))
             sim.vmin[L] = -tmp
             sim.vmax[L] =  tmp
-        Q = plt.pcolormesh(x,t[:2],sim.hov_h[:,L,:2].T - np.sum(sim.Hs[L:]),cmap=sim.cmap, 
+        Q = plt.pcolormesh(x,t[:2],sim.hov_h[:,L,:2].T - np.sum(sim.Hs[L:]),cmap=sim.cmap,
                 vmin = sim.vmin[L], vmax = sim.vmax[L])
         plt.ylim((t[0],t[-1]))
         plt.axis('tight')
@@ -50,4 +49,3 @@ def initialize_plots_hov(sim):
     plt.ion()
     plt.pause(0.01)
     plt.draw()
-

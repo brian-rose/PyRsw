@@ -1,6 +1,5 @@
 from __future__ import division
 from builtins import range
-from past.utils import old_div
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -50,7 +49,7 @@ sim.animate = 'Anim'      # 'Save' to create video frames,
 sim.plot_vars = ['u','v','h']   # Specify which variables to plot
                                 # Specify manual ylimits if desired
                                 # An empty list uses default limits
-sim.ylims=[[-0.18,0.18],[-0.18,0.18],[-0.5,1.0]] 
+sim.ylims=[[-0.18,0.18],[-0.18,0.18],[-0.5,1.0]]
 
 # Output parameters
 sim.output = False        # True or False
@@ -71,11 +70,11 @@ x0 = 1.*sim.Lx/2.          # Centre
 W  = 200.e3                # Width
 amp = 1.                   # Amplitude
 
-sim.soln.h[:,:,0] += amp*np.exp(old_div(-(sim.grid_y.h + old_div(sim.Ly,4.))**2,(W**2)))
+sim.soln.h[:,:,0] += amp*np.exp(-(sim.grid_y.h + sim.Ly/4.)**2/(W**2))
 #sim.soln.h[:,:,0] += amp*np.exp(-(sim.grid_x.h + sim.Lx/4.)**2/(W**2))
 
 # Run the simulation
-sim.run()                
+sim.run()
 
 # Hovmuller plot
 #plt.figure()

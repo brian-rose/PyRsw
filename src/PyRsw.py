@@ -6,7 +6,6 @@ from __future__ import division
 
 
 from builtins import map
-from past.utils import old_div
 from builtins import object
 import numpy as np
 import matplotlib
@@ -37,7 +36,7 @@ class SolutionSd(object):
             self.u = np.zeros((1, Ny+1, Nz))
             self.v = np.zeros((1, Ny,   Nz))
             self.h = np.zeros((1, Ny+1, Nz+1))
-        elif Ny == 1:    
+        elif Ny == 1:
             self.u = np.zeros((Nx,   1, Nz))
             self.v = np.zeros((Nx+1, 1, Nz))
             self.h = np.zeros((Nx+1, 1, Nz+1))
@@ -66,7 +65,7 @@ class Simulation(object):
 
         self.nfluxes = 0            # Length of flux history
         self.fluxes = Flux()
-        
+
         self.method = 'Spectral'    # Spectral or Finite Volume (FV)?
 
         self.dynamics = 'Nonlinear' # Nonlinear or Linear
@@ -76,7 +75,7 @@ class Simulation(object):
         self.plot_vars = ['u','v','h']         # Which variables to plot
         self.ylims = []
         self.clims = []
-        
+
         self.g    = 9.81            # gravity
         self.f0   = 1e-4            # Coriolis
         self.beta = 0.
@@ -90,7 +89,7 @@ class Simulation(object):
         self.geomy = 'periodic'     # y boundary condition
 
         self.cmap = 'seismic'       # Default colour map
-        
+
         self.run_name = 'test'      # Name of variable
 
         #FJP: only spectral
@@ -115,7 +114,7 @@ class Simulation(object):
         self.restart_index = 0
 
         self.topo_func = null_topo  # Default to no topograpy
-        
+
     # Full initialization for once the user has specified parameters
     def initialize(self):
 
@@ -168,32 +167,32 @@ class Simulation(object):
         if self.restarting:
             print('Restarting from index {0:d}'.format(self.restart_index))
         print(' ')
-        
+
 
         # Initialize grids and cell centres
         dxs = [1,1]
 
         # x,  y:   centre values
         # xe, ye:  edge values
-        
-        dx = old_div(self.Lx,self.Nx)
-        self.x = np.arange(old_div(dx,2),self.Lx,dx)    - old_div(self.Lx,2.)
+
+        dx = self.Lx/self.Nx
+        self.x = np.arange(dx/2,self.Lx,dx)    - self.Lx/2.
         dxs[0] = dx
 
-        dy = old_div(self.Ly,self.Ny)
-        self.y = np.arange(old_div(dy,2),self.Ly,dy)    - old_div(self.Ly,2.)
+        dy = self.Ly/self.Ny
+        self.y = np.arange(dy/2,self.Ly,dy)    - self.Ly/2.
         dxs[1] = dy
 
         [self.X, self.Y]  = np.meshgrid(self.x, self.y, indexing='ij')
 
         if self.method.lower() == 'sadourny':
             if self.Nx > 1:
-                xe = np.arange(0.0, self.Lx+dx,dx) - old_div(self.Lx,2.)
+                xe = np.arange(0.0, self.Lx+dx,dx) - self.Lx/2.
                 #xe.reshape((self.Nx+1,1))
             else:
                 xe = np.array([0.0])
             if self.Ny > 1:
-                ye = np.arange(0.0, self.Ly+dy,dy) - old_div(self.Ly,2.)
+                ye = np.arange(0.0, self.Ly+dy,dy) - self.Ly/2.
                 #ye.reshape((1,self.Ny+1))
             else:
                 ye = np.array([0.0])
@@ -239,36 +238,36 @@ class Simulation(object):
             ford = self.ford
             fstr = self.fstr
             if self.Nx>1:
-                k = old_div(self.kx,max(self.kx.ravel()))
-                filtx = np.exp(-fstr*(old_div((np.abs(k)-fcut),(1-fcut)))**ford)*(np.abs(k)>fcut) + (np.abs(k)<fcut)
+                k = self.kx/max(self.kx.ravel())
+                filtx = np.exp(-fstr*((np.abs(k)-fcut)/(1-fcut))**ford)*(np.abs(k)>fcut) + (np.abs(k)<fcut)
                 filtx = filtx.reshape((self.Nkx,1))
             else:
                 filtx = np.array([1.0])
-                
+
             if self.Ny>1:
-                k = old_div(self.ky,max(self.ky.ravel()))
-                filty = np.exp(-fstr*(old_div((np.abs(k)-fcut),(1-fcut)))**ford)*(np.abs(k)>fcut) + (np.abs(k)<fcut)
+                k = self.ky/max(self.ky.ravel())
+                filty = np.exp(-fstr*((np.abs(k)-fcut)/(1-fcut))**ford)*(np.abs(k)>fcut) + (np.abs(k)<fcut)
                 filty = filty.reshape((1,self.Nky))
             else:
                 filty = np.array([1.0])
-                
+
             self.sfilt = np.tile(filtx,(1,self.Nky))*np.tile(filty,(self.Nkx,1))
 
         # If we're using a fixed dt, check that it matches plott, savet, and diagt
         if self.animate.lower() != 'none':
-            if old_div(self.plott,self.fixed_dt) != int(old_div(self.plott,self.fixed_dt)):
+            if self.plott/self.fixed_dt != int(self.plott/self.fixed_dt):
                 print('Error: Plot interval not integer multiple of fixed dt.')
                 sys.exit()
         if self.diagnose:
-            if old_div(self.diagt,self.fixed_dt) != int(old_div(self.diagt,self.fixed_dt)):
+            if self.diagt/self.fixed_dt != int(self.diagt/self.fixed_dt):
                 print('Error: Diagnostic interval not integer multiple of fixed dt.')
                 sys.exit()
         if self.output:
-            if old_div(self.savet,self.fixed_dt) != int(old_div(self.savet,self.fixed_dt)):
+            if self.savet/self.fixed_dt != int(self.savet/self.fixed_dt):
                 print('Error: Output interval not integer multiple of fixed dt.')
                 sys.exit()
 
-            
+
         # If we're restarting load the appropriate files
         if self.restarting:
             try:
@@ -281,18 +280,18 @@ class Simulation(object):
                 print('Restarting failed. Exiting.')
                 sys.exit()
 
-        
+
     def prepare_for_run(self):
 
         #FJP: not ready for Sadourny
         # If we're going to be diagnosing, initialize those
         #Diagnose.initialize_diagnostics(self)
-    
+
         # If we're saving, initialize those too
         if self.output:
             self.next_save_time = (self.restart_index+1)*self.savet
             self.out_counter = self.restart_index
-    
+
         # If we're saving, initialize the directory
         if self.output or (self.animate == 'Save') or self.diagnose:
             self.initialize_saving()
@@ -305,8 +304,8 @@ class Simulation(object):
             else:
                 self.ylims += [[]]*(len(self.plot_vars) - len(self.ylims))
                 self.initialize_plots = Plot_tools.initialize_plots_animsave_1D
-        
-            num_plot = old_div(self.end_time,self.plott)+1
+
+            num_plot = self.end_time/self.plott+1
             #FJP: not ready for Sadourny
             #if (self.Nx > 1) and (self.Ny == 1):
             #    self.hov_h = np.zeros((self.Nx,self.Nz,num_plot))
@@ -320,7 +319,7 @@ class Simulation(object):
 
             if not(self.restarting):
                 self.update_plots(self)
-            self.frame_count = int(np.floor(old_div(self.time,self.plott)) + 1)
+            self.frame_count = int(np.floor(self.time/self.plott) + 1)
             self.next_plot_time = self.frame_count*self.plott
 
     # Compute the current flux
@@ -329,7 +328,7 @@ class Simulation(object):
 
     # Adjust time-step when necessary
     def adjust_dt(self):
-        
+
         t = self.time + self.dt
 
         nt = self.end_time # next time for doing stuff
@@ -365,8 +364,8 @@ class Simulation(object):
     # Advance the simulation one time-step.
     def step(self):
 
-        self.compute_dt() 
-        
+        self.compute_dt()
+
         # Check if we need to adjust the time-step
         # to match an output time
         do_plot, do_diag, do_save = self.adjust_dt()
@@ -378,7 +377,7 @@ class Simulation(object):
             self.apply_filter(self)
 
         self.time += self.dt
-       
+
         if do_plot:
             self.update_plots(self)
             self.next_plot_time += self.plott
@@ -394,7 +393,7 @@ class Simulation(object):
             self.next_save_time += self.savet
 
         # Update the records
-        self.mean_dt = old_div((self.mean_dt*self.num_steps + self.dt),(self.num_steps+1))
+        self.mean_dt = (self.mean_dt*self.num_steps + self.dt)/(self.num_steps+1)
         self.num_steps += 1
 
         if do_plot or self.time == self.dt:
@@ -407,7 +406,7 @@ class Simulation(object):
             minu = np.min(np.ravel(self.soln.u[:,:,0]))
             maxv = np.max(np.ravel(self.soln.v[:,:,0]))
             minv = np.min(np.ravel(self.soln.v[:,:,0]))
-            
+
             #mass = Diagnose.compute_mass(self)
             #enrg = Diagnose.compute_PE(self) + Diagnose.compute_KE(self)
 
@@ -422,9 +421,9 @@ class Simulation(object):
                 pstr += ', min(u,v,h) = ({0: < 8.4e},{1: < 8.4e},{2: < 8.4e})'.format(minu,minv,minh)
                 #pstr += ', del_mass = {0: .2g}'.format(mass/self.Ms[0]-1)
                 pstr += '\n'
-                tmp = '  = {0:.3%}'.format(old_div(self.time,self.end_time))
+                tmp = '  = {0:.3%}'.format(self.time/self.end_time)
                 pstr += tmp
-                pstr += ' '*(L - len(tmp))            
+                pstr += ' '*(L - len(tmp))
                 pstr += 'avg = {0:0<7.1e}'.format(self.mean_dt)
                 pstr += ', max(u,v,h) = ({0: < 8.4e},{1: < 8.4e},{2: < 8.4e})'.format(maxu,maxv,maxh)
                 #pstr += ', del_enrg = {0: .2g}'.format(enrg/(self.KEs[0]+self.PEs[0])-1)
@@ -437,7 +436,7 @@ class Simulation(object):
                 #pstr += ', del_mass = {0:+.2g}'.format(mass/self.Ms[0]-1)
                 #pstr += ', del_enrg = {0:+.2g}'.format(enrg/(self.KEs[0]+self.PEs[0])-1)
                 pstr += '\n'
-                pstr += '  = {0:.3%}'.format(old_div(self.time,self.end_time))
+                pstr += '  = {0:.3%}'.format(self.time/self.end_time)
 
             head_str = ('\n{0:s}'.format(self.run_name))
             if self.animate != 'None':
@@ -466,7 +465,7 @@ class Simulation(object):
 
         #if self.diagnose:
         #    Diagnose.plot(self)
-        
+
         #if (self.animate == 'Anim'):
             #print "h at x = 0 and t = ", self.time
             #plt.figure()
@@ -493,22 +492,22 @@ class Simulation(object):
             max_u = np.max(np.abs(self.soln.u.ravel()))
             max_v = np.max(np.abs(self.soln.v.ravel()))
 
-            dt_x = self.end_time - (old_div((self.Nx-1),(self.Nx-1+eps)))*(self.end_time - old_div(self.dx[0],(max_u+2*c)))
-            dt_y = self.end_time - (old_div((self.Ny-1),(self.Ny-1+eps)))*(self.end_time - old_div(self.dx[1],(max_v+2*c)))
+            dt_x = self.end_time - ((self.Nx-1)/(self.Nx-1+eps))*(self.end_time - self.dx[0]/(max_u+2*c))
+            dt_y = self.end_time - ((self.Ny-1)/(self.Ny-1+eps))*(self.end_time - self.dx[1]/(max_v+2*c))
 
             self.dt = max([self.cfl*min([dt_x,dt_y]),self.min_dt])
 
             # If using an adaptive timestep, slowing increase dt
             # over the first 20 steps.
             if self.num_steps <= 20:
-                self.dt *= old_div(1.,(5*(21 - self.num_steps)))
+                self.dt *= 1./(5*(21 - self.num_steps))
         else:
             self.dt = self.fixed_dt
 
 
         # Slowly ramp-up the dt for the first 20 steps
         if self.num_steps <= 20:
-            self.dt *= old_div(1.,(5*(21-self.num_steps)))
+            self.dt *= 1./(5*(21-self.num_steps))
 
     # Initialize the saving
     def initialize_saving(self):
@@ -521,7 +520,7 @@ class Simulation(object):
             # If directory already exists, delete it.
             if os.path.isdir(path):
                print('Output directory {0:s} already exists. '.format(path) + \
-                     'Warning, deleting everything in the directory.') 
+                     'Warning, deleting everything in the directory.')
                shutil.rmtree(path)
             # Make directory.
             os.mkdir(path)
@@ -555,9 +554,9 @@ class Simulation(object):
         fp.close()
 
     #FJP: modify for new grid sizes
-    # Save grid 
+    # Save grid
     def save_grid(self):
-        fname = 'Outputs/{0:s}/grid'.format(self.run_name) 
+        fname = 'Outputs/{0:s}/grid'.format(self.run_name)
         if self.Nx > 1 and self.Ny > 1:
             np.savez_compressed(fname, x = self.x, y = self.y, X = self.X, Y = self.Y)
         elif self.Nx > 1:

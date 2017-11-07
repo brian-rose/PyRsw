@@ -4,7 +4,6 @@ from __future__ import division
 # Assume that the field is 1-dimensional
 
 from builtins import range
-from past.utils import old_div
 import matplotlib.pyplot as plt
 import numpy as np
 from .smart_time import smart_time
@@ -40,24 +39,23 @@ def update_anim_1D(sim):
                         - sim.ddy_u(sim.soln.u[:,:,L],sim)
                 to_plot = to_plot.ravel()
                 if sim.f0 != 0:
-                    to_plot *= old_div(1.,sim.f0)
+                    to_plot *= 1./sim.f0
             elif var == 'div':
-                h = sim.soln.h[:,:,L] 
+                h = sim.soln.h[:,:,L]
                 to_plot = sim.ddx_u(h*sim.soln.u[:,:,L],sim) \
                         + sim.ddy_v(h*sim.soln.v[:,:,L],sim)
                 to_plot = to_plot.ravel()
                 if sim.f0 != 0:
-                    to_plot *= old_div(1.,sim.f0)
+                    to_plot *= 1./sim.f0
 
 
             sim.Qs[var_cnt][L].set_ydata(to_plot)
 
-            if len(sim.ylims[var_cnt]) != 2: 
+            if len(sim.ylims[var_cnt]) != 2:
                 sim.axs[var_cnt][L].relim()
                 tmp = sim.axs[var_cnt][L].get_ylim()
                 sim.axs[var_cnt][L].set_ylim([-np.max(np.abs(tmp)), np.max(np.abs(tmp))]);
                 sim.axs[var_cnt][L].autoscale_view()
 
-    plt.pause(0.01) 
+    plt.pause(0.01)
     plt.draw()
-

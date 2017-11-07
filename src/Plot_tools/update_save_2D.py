@@ -2,7 +2,6 @@ from __future__ import absolute_import
 from __future__ import division
 # Update plot objects if saving
 from builtins import range
-from past.utils import old_div
 import numpy as np
 from .smart_time import smart_time
 import matplotlib.pyplot as plt
@@ -35,7 +34,7 @@ def update_save_2D(sim):
                 elif sim.method.lower() == 'spectral':
                     to_plot = sim.soln.h[0:sim.Nx,0:sim.Ny,L] - sim.Hs[L]
             elif var == 'vort':
-                
+
                 if sim.method.lower() == 'sadourny':
                     to_plot =     sim.ddx_v(sim.soln.v[0:sim.Nx+1,0:sim.Ny,L],sim.dx[0]) \
                                 - sim.ddy_u(sim.soln.u[0:sim.Nx,0:sim.Ny+1,L],sim.dx[1])
@@ -43,11 +42,11 @@ def update_save_2D(sim):
                 elif sim.method.lower() == 'spectral':
                     to_plot =     sim.ddx_v(sim.soln.v[0:sim.Nx,0:sim.Ny,L],sim) \
                                 - sim.ddy_u(sim.soln.u[0:sim.Nx,0:sim.Ny,L],sim)
-                
+
                 if sim.f0 != 0:
                     sim.ttls[var_cnt][L].set_text('Vorticity / f_0 : {0:s}'.format(smart_time(sim.time)))
-                    to_plot *= old_div(1.,sim.f0)
-                else:   
+                    to_plot *= 1./sim.f0
+                else:
                     sim.ttls[var_cnt][L].set_text('Vorticity : {0:s}'.format(smart_time(sim.time)))
             elif var == 'div':
 
@@ -55,14 +54,14 @@ def update_save_2D(sim):
                     to_plot =     sim.ddx_u(sim.avx_h(sim.soln.h[0:sim.Nx+1,0:sim.Ny+1,L])*sim.soln.u[0:sim.Nx,0:sim.Ny+1,L],sim.dx[0]) \
                                 + sim.ddy_v(sim.avy_h(sim.soln.h[0:sim.Nx+1,0:sim.Ny+1,L])*sim.soln.v[0:sim.Nx+1,0:sim.Ny,L],sim.dy[0])
                 elif sim.method.lower() == 'spectral':
-                    h = sim.soln.h[:,:,L] 
+                    h = sim.soln.h[:,:,L]
                     to_plot =     sim.ddx_u(h*sim.soln.u[0:Nx,0:Ny,L],sim) \
                                 + sim.ddy_v(h*sim.soln.v[0:Nx,0:Ny,L],sim)
 
                 if sim.f0 != 0:
                     sim.ttls[var_cnt][L].set_text('Divergence of mass-flux / f_0 : {0:s}'.format(smart_time(sim.time)))
-                    to_plot *= old_div(1.,sim.f0)
-                else:   
+                    to_plot *= 1./sim.f0
+                else:
                     sim.ttls[var_cnt][L].set_text('Divergence of mass-flux : {0:s}'.format(smart_time(sim.time)))
 
             sim.Qs[var_cnt][L].set_array(to_plot.ravel())
@@ -72,4 +71,3 @@ def update_save_2D(sim):
         sim.figs[var_cnt].savefig('Outputs/{0:s}/Frames/{1:s}_{2:05d}.png'.format(sim.run_name,var,sim.frame_count))
 
     sim.frame_count += 1
-

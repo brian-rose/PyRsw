@@ -1,6 +1,5 @@
 from __future__ import division
 from builtins import range
-from past.utils import old_div
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -49,7 +48,7 @@ sim.animate = 'Save'      # 'Save' to create video frames,
                           # 'Anim' to animate,
                           # 'None' otherwise
 sim.plot_vars = ['vort', 'v', 'u', 'h']
-sim.clims = [ [-0.8, 0.8], [-0.5,0.5], [], []]                         
+sim.clims = [ [-0.8, 0.8], [-0.5,0.5], [], []]
 
 # Output parameters
 sim.output = True        # True or False
@@ -69,13 +68,11 @@ for ii in range(sim.Nz):  # Set mean depths
 # First we define the jet
 Ljet = 10e3            # Jet width
 amp  = 0.1             # Elevation of free-surface in basic state
-sim.soln.h[:,:,0] += -amp*np.tanh(old_div(sim.Y,Ljet))
-sim.soln.u[:,:,0]  =  sim.g*amp/(sim.f0*Ljet)/(np.cosh(old_div(sim.Y,Ljet))**2)
+sim.soln.h[:,:,0] += -amp*np.tanh(sim.Y/Ljet)
+sim.soln.u[:,:,0]  =  sim.g*amp/(sim.f0*Ljet)/(np.cosh(sim.Y/Ljet)**2)
 
 # Then we add on a random perturbation
 np.random.seed(seed=100)
-sim.soln.u[:,:,0] +=  1e-3*np.exp(-(old_div(sim.Y,Ljet))**2)*np.random.randn(sim.Nx,sim.Ny)
+sim.soln.u[:,:,0] +=  1e-3*np.exp(-(sim.Y/Ljet)**2)*np.random.randn(sim.Nx,sim.Ny)
 
 sim.run()                # Run the simulation
-
-

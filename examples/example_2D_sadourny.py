@@ -1,6 +1,5 @@
 from __future__ import division
 from builtins import range
-from past.utils import old_div
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -24,7 +23,7 @@ sim.geomy       = 'periodic'       # Geometry Types: 'periodic' or 'walls'
 sim.stepper     = Step.AB3         # Time-stepping algorithm: Euler, AB2, RK4
 sim.dynamics    = 'Linear'      # Dynamics: 'Nonlinear' or 'Linear'
 sim.method      = 'Sadourny'       # Numerical method: 'Sadourny'
-sim.flux_method = Flux.sadourny_sw # Flux method: 
+sim.flux_method = Flux.sadourny_sw # Flux method:
 
 # Specify paramters
 sim.Lx  = 4000e3          # Domain extent               (m)
@@ -51,7 +50,7 @@ sim.animate = 'Anim'      # 'Save' to create video frames,
 sim.plot_vars = ['u','v','h']   # Specify which variables to plot
                                 # Specify manual ylimits if desired
                                 # An empty list uses default limits
-sim.ylims=[[-0.18,0.18],[-0.18,0.18],[-0.5,1.0]] 
+sim.ylims=[[-0.18,0.18],[-0.18,0.18],[-0.5,1.0]]
 
 # Output parameters
 sim.output = False        # True or False
@@ -72,19 +71,19 @@ x0 = 1.*sim.Lx/2.          # Centre
 W  = 200.e3                # Width
 amp = 1.                   # Amplitude
 
-sim.soln.h[:,:,0] += amp*np.exp(old_div(-(sim.grid_y.h)**2,(W**2)))
+sim.soln.h[:,:,0] += amp*np.exp(-(sim.grid_y.h)**2/(W**2))
 
 # Run the simulation
-sim.run()                
+sim.run()
 
 # Hovmuller plot
 plt.figure()
-t = old_div(np.arange(0,sim.end_time+sim.plott,sim.plott),86400.)
+t = np.arange(0,sim.end_time+sim.plott,sim.plott)/86400.
 
 if sim.Ny==1:
-    x = old_div(sim.x,1e3)
+    x = sim.x/1e3
 elif sim.Nx == 1:
-    x = old_div(sim.y,1e3)
+    x = sim.y/1e3
 
 #for L in range(sim.Nz):
 #    field = sim.hov_h[:,0,:].T - np.sum(sim.Hs[L:])

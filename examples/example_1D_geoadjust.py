@@ -1,6 +1,5 @@
 from __future__ import division
 from builtins import range
-from past.utils import old_div
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -50,7 +49,7 @@ sim.animate = 'Anim'      # 'Save' to create video frames,
 sim.plot_vars = ['u','v','h']   # Specify which variables to plot
                                 # Specify manual ylimits if desired
                                 # An empty list uses default limits
-sim.ylims=[[-0.18,0.18],[-0.18,0.18],[-0.5,1.0]] 
+sim.ylims=[[-0.18,0.18],[-0.18,0.18],[-0.5,1.0]]
 
 # Output parameters
 sim.output = False        # True or False
@@ -70,19 +69,19 @@ for ii in range(sim.Nz):  # Set mean depths
 x0 = 1.*sim.Lx/2.      # Centre
 W  = 200.e3                # Width
 amp = 1.                  # Amplitude
-sim.soln.h[:,:,0] += amp*np.exp(old_div(-(sim.Y)**2,(W**2)))
+sim.soln.h[:,:,0] += amp*np.exp(-(sim.Y)**2/(W**2))
 
 sim.run()                # Run the simulation
 
 
 # Hovmuller plot
 plt.figure()
-t = old_div(np.arange(0,sim.end_time+sim.plott,sim.plott),86400.)
+t = np.arange(0,sim.end_time+sim.plott,sim.plott)/86400.
 
 if sim.Ny==1:
-    x = old_div(sim.x,1e3)
+    x = sim.x/1e3
 elif sim.Nx == 1:
-    x = old_div(sim.y,1e3)
+    x = sim.y/1e3
 
 for L in range(sim.Nz):
     field = sim.hov_h[:,0,:].T - np.sum(sim.Hs[L:])
