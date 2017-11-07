@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 import matplotlib.pyplot as plt
 import numpy as np
-from smart_time import smart_time
+from .smart_time import smart_time
 
 def update_hov(sim):
 

@@ -1,9 +1,10 @@
+from __future__ import absolute_import
 # Update plot objects if saving
 # Assume the field is 1-dimensional
 
 import matplotlib.pyplot as plt
 import numpy as np
-from smart_time import smart_time
+from .smart_time import smart_time
 
 def update_save_1D(sim):
 

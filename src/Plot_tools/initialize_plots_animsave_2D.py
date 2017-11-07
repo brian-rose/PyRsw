@@ -1,11 +1,12 @@
+from __future__ import absolute_import
 # Initialize plot objects for anim or save
 # Assume that hte field is 2-dimensional
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-from update_anim_2D import update_anim_2D
-from update_save_2D import update_save_2D
+from .update_anim_2D import update_anim_2D
+from .update_save_2D import update_save_2D
 
 def initialize_plots_animsave_2D(sim):
 

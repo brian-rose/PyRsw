@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 # Update plot objects if animating
 import numpy as np
-from smart_time import smart_time
+from .smart_time import smart_time
 import matplotlib.pyplot as plt
 
 def update_anim_2D(sim):

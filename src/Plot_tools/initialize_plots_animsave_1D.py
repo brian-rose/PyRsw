@@ -1,11 +1,12 @@
+from __future__ import absolute_import
 # Initialize plot objects for anim or save
 # Assume that the field is 1-dimensional
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from update_anim_1D import update_anim_1D
-from update_save_1D import update_save_1D
+from .update_anim_1D import update_anim_1D
+from .update_save_1D import update_save_1D
 
 def initialize_plots_animsave_1D(sim):
 

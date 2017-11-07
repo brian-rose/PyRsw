@@ -1,4 +1,6 @@
-import Differentiation as Diff
+from __future__ import print_function
+from __future__ import absolute_import
+from . import Differentiation as Diff
 import numpy as np
 import sys
 
@@ -147,7 +149,7 @@ def spectral_sw(sim):
     elif sim.dynamics == 'Linear':
         sim.flux_function = spectral_sw_linear_flux
     else:
-        print "dynamics must be from the list: Nonlinear, Linear"
+        print("dynamics must be from the list: Nonlinear, Linear")
         sys.exit()
             
     sim.apply_filter = filter_general

@@ -1,3 +1,4 @@
+from __future__ import print_function
 ##
 ## This file contains the core PyRsw user class.
 ##
@@ -14,6 +15,7 @@ from scipy.fftpack import fftn, ifftn, fftfreq
 import os, sys, shutil
 #FJP
 import matplotlib.pyplot as plt
+from functools import reduce
 
 def null_topo(a_sim):
     return
@@ -161,7 +163,7 @@ class Simulation:
                 print('Coriolis = f-plane')
         if self.restarting:
             print('Restarting from index {0:d}'.format(self.restart_index))
-        print ' '
+        print(' ')
         
 
         # Initialize grids and cell centres

@@ -1,6 +1,7 @@
+from __future__ import absolute_import
 import numpy as np
-from Euler import Euler
-from AB2 import AB2
+from .Euler import Euler
+from .AB2 import AB2
 
 def AB3(sim):
     if sim.nfluxes < 2:
