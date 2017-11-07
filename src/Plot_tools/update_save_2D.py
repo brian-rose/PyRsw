@@ -1,5 +1,8 @@
 from __future__ import absolute_import
+from __future__ import division
 # Update plot objects if saving
+from builtins import range
+from past.utils import old_div
 import numpy as np
 from .smart_time import smart_time
 import matplotlib.pyplot as plt
@@ -43,7 +46,7 @@ def update_save_2D(sim):
                 
                 if sim.f0 != 0:
                     sim.ttls[var_cnt][L].set_text('Vorticity / f_0 : {0:s}'.format(smart_time(sim.time)))
-                    to_plot *= 1./sim.f0
+                    to_plot *= old_div(1.,sim.f0)
                 else:   
                     sim.ttls[var_cnt][L].set_text('Vorticity : {0:s}'.format(smart_time(sim.time)))
             elif var == 'div':
@@ -58,7 +61,7 @@ def update_save_2D(sim):
 
                 if sim.f0 != 0:
                     sim.ttls[var_cnt][L].set_text('Divergence of mass-flux / f_0 : {0:s}'.format(smart_time(sim.time)))
-                    to_plot *= 1./sim.f0
+                    to_plot *= old_div(1.,sim.f0)
                 else:   
                     sim.ttls[var_cnt][L].set_text('Divergence of mass-flux : {0:s}'.format(smart_time(sim.time)))
 

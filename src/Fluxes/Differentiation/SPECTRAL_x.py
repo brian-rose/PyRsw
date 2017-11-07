@@ -1,4 +1,7 @@
 from __future__ import print_function
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import numpy as np
 import sys
  
@@ -71,7 +74,7 @@ def SPECTRAL_x(sim):       # Set the differentiation operators
                 df = np.real(sim.ifftx_h(sim.ik*sim.fftx_h(f)))
                 return df
     
-            kx = 2*np.pi/sim.Lx*np.hstack([range(0,int(sim.Nx/2)), range(-int(sim.Nx/2),0)])
+            kx = 2*np.pi/sim.Lx*np.hstack([list(range(0,int(old_div(sim.Nx,2)))), list(range(-int(old_div(sim.Nx,2)),0))])
             sim.kx = kx.copy()
             sim.ik = 1j*np.tile(kx.reshape((sim.Nkx,1)),(1,sim.Ny))
     
@@ -95,7 +98,7 @@ def SPECTRAL_x(sim):       # Set the differentiation operators
                 df = np.real(sim.ifftx_h(sim.ik*sim.fftx_h(fe)))[:N,:]
                 return df
 
-            kx = np.pi/sim.Lx*np.hstack([range(0,int(sim.Nx)), range(-int(sim.Nx),0)])
+            kx = np.pi/sim.Lx*np.hstack([list(range(0,int(sim.Nx))), list(range(-int(sim.Nx),0))])
             sim.kx = kx.copy()
             sim.ik = 1j*np.tile(kx.reshape((sim.Nkx,1)),(1,sim.Ny))
         

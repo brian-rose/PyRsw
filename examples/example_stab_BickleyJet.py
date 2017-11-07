@@ -1,3 +1,5 @@
+from __future__ import division
+from past.utils import old_div
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.linalg as spalg
@@ -51,14 +53,14 @@ sim.initialize()
 # Define Differentiation Matrix and grid
 Dy,y = cheb(sim.Ny)
 y   = (y[:,0]+1)*sim.Ly/2
-Dy = Dy*(2/sim.Ly)
+Dy = Dy*(old_div(2,sim.Ly))
 
 # Define Basic State: Bickley Jet
 Ljet = 20e3            # Jet width
 Umax = 0.5             # Maximum speed
 amp  = Umax*sim.f0*Ljet/sim.g    # Elevation of free-surface in basic state
-sim.UB  =  sim.g*amp/(sim.f0*Ljet)/(np.cosh((y-sim.Ly/2.)/Ljet)**2)
-sim.HB  = sim.Hs[0] - amp*np.tanh((y-sim.Ly/2.)/Ljet)
+sim.UB  =  sim.g*amp/(sim.f0*Ljet)/(np.cosh(old_div((y-old_div(sim.Ly,2.)),Ljet))**2)
+sim.HB  = sim.Hs[0] - amp*np.tanh(old_div((y-old_div(sim.Ly,2.)),Ljet))
 sim.dUB = np.dot(Dy,sim.UB) 
 
 # Test Geostrophy
@@ -68,7 +70,7 @@ sim.dUB = np.dot(Dy,sim.UB)
 
 ## Specify wavenumber
 dkk = 2e-2
-kk = np.arange(dkk,2+dkk,dkk)/Ljet
+kk = old_div(np.arange(dkk,2+dkk,dkk),Ljet)
 Nk = len(kk)
 
 ## Storage Arrays

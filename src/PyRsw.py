@@ -1,9 +1,13 @@
 from __future__ import print_function
+from __future__ import division
 ##
 ## This file contains the core PyRsw user class.
 ##
 
 
+from builtins import map
+from past.utils import old_div
+from builtins import object
 import numpy as np
 import matplotlib
 import Plot_tools
@@ -21,13 +25,13 @@ def null_topo(a_sim):
     return
 
 #FJP: why do we have 2 layers of u,v,h if Nz = 0?
-class Solution():
+class Solution(object):
     def __init__(self,Nx,Ny,Nz):
         self.u = np.zeros((Nx,Ny,Nz+1))
         self.v = np.zeros((Nx,Ny,Nz+1))
         self.h = np.zeros((Nx,Ny,Nz+1))
 
-class SolutionSd():
+class SolutionSd(object):
     def __init__(self,Nx,Ny,Nz):
         if Nx == 1:
             self.u = np.zeros((1, Ny+1, Nz))
@@ -42,13 +46,13 @@ class SolutionSd():
             self.v = np.zeros((Nx+1, Ny,   Nz))
             self.h = np.zeros((Nx+1, Ny+1, Nz+1))
 
-class Flux():
+class Flux(object):
     def __init__(self):
         self.u = []
         self.v = []
         self.h = []
 
-class Simulation:
+class Simulation(object):
 
     # First-level initialization, default values
     def __init__(self):
@@ -172,24 +176,24 @@ class Simulation:
         # x,  y:   centre values
         # xe, ye:  edge values
         
-        dx = self.Lx/self.Nx
-        self.x = np.arange(dx/2,self.Lx,dx)    - self.Lx/2.
+        dx = old_div(self.Lx,self.Nx)
+        self.x = np.arange(old_div(dx,2),self.Lx,dx)    - old_div(self.Lx,2.)
         dxs[0] = dx
 
-        dy = self.Ly/self.Ny
-        self.y = np.arange(dy/2,self.Ly,dy)    - self.Ly/2.
+        dy = old_div(self.Ly,self.Ny)
+        self.y = np.arange(old_div(dy,2),self.Ly,dy)    - old_div(self.Ly,2.)
         dxs[1] = dy
 
         [self.X, self.Y]  = np.meshgrid(self.x, self.y, indexing='ij')
 
         if self.method.lower() == 'sadourny':
             if self.Nx > 1:
-                xe = np.arange(0.0, self.Lx+dx,dx) - self.Lx/2.
+                xe = np.arange(0.0, self.Lx+dx,dx) - old_div(self.Lx,2.)
                 #xe.reshape((self.Nx+1,1))
             else:
                 xe = np.array([0.0])
             if self.Ny > 1:
-                ye = np.arange(0.0, self.Ly+dy,dy) - self.Ly/2.
+                ye = np.arange(0.0, self.Ly+dy,dy) - old_div(self.Ly,2.)
                 #ye.reshape((1,self.Ny+1))
             else:
                 ye = np.array([0.0])
@@ -235,15 +239,15 @@ class Simulation:
             ford = self.ford
             fstr = self.fstr
             if self.Nx>1:
-                k = self.kx/max(self.kx.ravel())
-                filtx = np.exp(-fstr*((np.abs(k)-fcut)/(1-fcut))**ford)*(np.abs(k)>fcut) + (np.abs(k)<fcut)
+                k = old_div(self.kx,max(self.kx.ravel()))
+                filtx = np.exp(-fstr*(old_div((np.abs(k)-fcut),(1-fcut)))**ford)*(np.abs(k)>fcut) + (np.abs(k)<fcut)
                 filtx = filtx.reshape((self.Nkx,1))
             else:
                 filtx = np.array([1.0])
                 
             if self.Ny>1:
-                k = self.ky/max(self.ky.ravel())
-                filty = np.exp(-fstr*((np.abs(k)-fcut)/(1-fcut))**ford)*(np.abs(k)>fcut) + (np.abs(k)<fcut)
+                k = old_div(self.ky,max(self.ky.ravel()))
+                filty = np.exp(-fstr*(old_div((np.abs(k)-fcut),(1-fcut)))**ford)*(np.abs(k)>fcut) + (np.abs(k)<fcut)
                 filty = filty.reshape((1,self.Nky))
             else:
                 filty = np.array([1.0])
@@ -252,15 +256,15 @@ class Simulation:
 
         # If we're using a fixed dt, check that it matches plott, savet, and diagt
         if self.animate.lower() != 'none':
-            if self.plott/self.fixed_dt != int(self.plott/self.fixed_dt):
+            if old_div(self.plott,self.fixed_dt) != int(old_div(self.plott,self.fixed_dt)):
                 print('Error: Plot interval not integer multiple of fixed dt.')
                 sys.exit()
         if self.diagnose:
-            if self.diagt/self.fixed_dt != int(self.diagt/self.fixed_dt):
+            if old_div(self.diagt,self.fixed_dt) != int(old_div(self.diagt,self.fixed_dt)):
                 print('Error: Diagnostic interval not integer multiple of fixed dt.')
                 sys.exit()
         if self.output:
-            if self.savet/self.fixed_dt != int(self.savet/self.fixed_dt):
+            if old_div(self.savet,self.fixed_dt) != int(old_div(self.savet,self.fixed_dt)):
                 print('Error: Output interval not integer multiple of fixed dt.')
                 sys.exit()
 
@@ -302,7 +306,7 @@ class Simulation:
                 self.ylims += [[]]*(len(self.plot_vars) - len(self.ylims))
                 self.initialize_plots = Plot_tools.initialize_plots_animsave_1D
         
-            num_plot = self.end_time/self.plott+1
+            num_plot = old_div(self.end_time,self.plott)+1
             #FJP: not ready for Sadourny
             #if (self.Nx > 1) and (self.Ny == 1):
             #    self.hov_h = np.zeros((self.Nx,self.Nz,num_plot))
@@ -316,7 +320,7 @@ class Simulation:
 
             if not(self.restarting):
                 self.update_plots(self)
-            self.frame_count = int(np.floor(self.time/self.plott) + 1)
+            self.frame_count = int(np.floor(old_div(self.time,self.plott)) + 1)
             self.next_plot_time = self.frame_count*self.plott
 
     # Compute the current flux
@@ -390,7 +394,7 @@ class Simulation:
             self.next_save_time += self.savet
 
         # Update the records
-        self.mean_dt = (self.mean_dt*self.num_steps + self.dt)/(self.num_steps+1)
+        self.mean_dt = old_div((self.mean_dt*self.num_steps + self.dt),(self.num_steps+1))
         self.num_steps += 1
 
         if do_plot or self.time == self.dt:
@@ -418,7 +422,7 @@ class Simulation:
                 pstr += ', min(u,v,h) = ({0: < 8.4e},{1: < 8.4e},{2: < 8.4e})'.format(minu,minv,minh)
                 #pstr += ', del_mass = {0: .2g}'.format(mass/self.Ms[0]-1)
                 pstr += '\n'
-                tmp = '  = {0:.3%}'.format(self.time/self.end_time)
+                tmp = '  = {0:.3%}'.format(old_div(self.time,self.end_time))
                 pstr += tmp
                 pstr += ' '*(L - len(tmp))            
                 pstr += 'avg = {0:0<7.1e}'.format(self.mean_dt)
@@ -433,7 +437,7 @@ class Simulation:
                 #pstr += ', del_mass = {0:+.2g}'.format(mass/self.Ms[0]-1)
                 #pstr += ', del_enrg = {0:+.2g}'.format(enrg/(self.KEs[0]+self.PEs[0])-1)
                 pstr += '\n'
-                pstr += '  = {0:.3%}'.format(self.time/self.end_time)
+                pstr += '  = {0:.3%}'.format(old_div(self.time,self.end_time))
 
             head_str = ('\n{0:s}'.format(self.run_name))
             if self.animate != 'None':
@@ -489,22 +493,22 @@ class Simulation:
             max_u = np.max(np.abs(self.soln.u.ravel()))
             max_v = np.max(np.abs(self.soln.v.ravel()))
 
-            dt_x = self.end_time - ((self.Nx-1)/(self.Nx-1+eps))*(self.end_time - self.dx[0]/(max_u+2*c))
-            dt_y = self.end_time - ((self.Ny-1)/(self.Ny-1+eps))*(self.end_time - self.dx[1]/(max_v+2*c))
+            dt_x = self.end_time - (old_div((self.Nx-1),(self.Nx-1+eps)))*(self.end_time - old_div(self.dx[0],(max_u+2*c)))
+            dt_y = self.end_time - (old_div((self.Ny-1),(self.Ny-1+eps)))*(self.end_time - old_div(self.dx[1],(max_v+2*c)))
 
             self.dt = max([self.cfl*min([dt_x,dt_y]),self.min_dt])
 
             # If using an adaptive timestep, slowing increase dt
             # over the first 20 steps.
             if self.num_steps <= 20:
-                self.dt *= 1./(5*(21 - self.num_steps))
+                self.dt *= old_div(1.,(5*(21 - self.num_steps)))
         else:
             self.dt = self.fixed_dt
 
 
         # Slowly ramp-up the dt for the first 20 steps
         if self.num_steps <= 20:
-            self.dt *= 1./(5*(21-self.num_steps))
+            self.dt *= old_div(1.,(5*(21-self.num_steps)))
 
     # Initialize the saving
     def initialize_saving(self):
@@ -570,5 +574,5 @@ class Simulation:
 
     # Helper to write arrays
     def array2str(fp,arr):
-        s = '[' + reduce(lambda s1,s2: s1+', '+s2, map(str,arr)) + ']'
+        s = '[' + reduce(lambda s1,s2: s1+', '+s2, list(map(str,arr))) + ']'
         return s

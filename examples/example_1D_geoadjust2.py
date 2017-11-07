@@ -1,3 +1,6 @@
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -68,19 +71,19 @@ for ii in range(sim.Nz):  # Set mean depths
 # Hyperbolic Tangent initial conditions
 W  = 50.e3                # Width
 amp = 0.5                  # Amplitude
-sim.soln.h[:,:,0] +=-amp*np.tanh(sim.Y/W)
+sim.soln.h[:,:,0] +=-amp*np.tanh(old_div(sim.Y,W))
 
 sim.run()                # Run the simulation
 
 
 # Hovmuller plot
 plt.figure()
-t = np.arange(0,sim.end_time+sim.plott,sim.plott)/86400.
+t = old_div(np.arange(0,sim.end_time+sim.plott,sim.plott),86400.)
 
 if sim.Ny==1:
-    x = sim.x/1e3
+    x = old_div(sim.x,1e3)
 elif sim.Nx == 1:
-    x = sim.y/1e3
+    x = old_div(sim.y,1e3)
 
 for L in range(sim.Nz):
     field = sim.hov_h[:,0,:].T - np.sum(sim.Hs[L:])

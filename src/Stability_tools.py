@@ -1,4 +1,5 @@
 from __future__ import division
+from builtins import range
 import numpy as np
 import scipy.linalg as spalg
 import matplotlib.pyplot as plt
@@ -16,9 +17,9 @@ def cheb(N):
         D = 0
         x = 1
     else:
-        x = np.cos(np.pi*np.array(range(0,N+1))/N).reshape([N+1,1])
+        x = np.cos(np.pi*np.array(list(range(0,N+1)))/N).reshape([N+1,1])
         c = np.ravel(np.vstack([2, np.ones([N-1,1]), 2])) \
-            *(-1)**np.ravel(np.array(range(0,N+1)))
+            *(-1)**np.ravel(np.array(list(range(0,N+1))))
         c = c.reshape(c.shape[0],1)
         X = np.tile(x,(1,N+1))
         dX = X-(X.conj().transpose())

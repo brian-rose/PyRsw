@@ -1,7 +1,10 @@
 from __future__ import absolute_import
+from __future__ import division
 # Initialize plot objects for anim or save
 # Assume that hte field is 2-dimensional
 
+from builtins import range
+from past.utils import old_div
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -70,7 +73,7 @@ def initialize_plots_animsave_2D(sim):
 
                 if sim.f0 != 0:
                     ttl = fig.suptitle('Vorticity / f_0 : t = 0')
-                    to_plot *= 1./sim.f0
+                    to_plot *= old_div(1.,sim.f0)
                 else:   
                     ttl = fig.suptitle('Vorticity : t = 0')
             elif var == 'div':
@@ -88,7 +91,7 @@ def initialize_plots_animsave_2D(sim):
 
                 if sim.f0 != 0:
                     ttl = fig.suptitle('Divergence of mass-flux / f_0 : t = 0')
-                    to_plot *= 1./sim.f0
+                    to_plot *= old_div(1.,sim.f0)
                 else:   
                     ttl = fig.suptitle('Divergence of mass-flux : t = 0')
 
@@ -107,15 +110,15 @@ def initialize_plots_animsave_2D(sim):
             X_plot = np.zeros((Nx+1,Ny+1))
             Y_plot = np.zeros((Nx+1,Ny+1))
 
-            X_plot[1:,1:] = X + sim.dx[0]/2.
-            X_plot[1:,0]  = X[:,0] + sim.dx[0]/2.
-            X_plot[0,:]   = X[0,0] - sim.dx[0]/2.
+            X_plot[1:,1:] = X + old_div(sim.dx[0],2.)
+            X_plot[1:,0]  = X[:,0] + old_div(sim.dx[0],2.)
+            X_plot[0,:]   = X[0,0] - old_div(sim.dx[0],2.)
 
-            Y_plot[1:,1:] = Y + sim.dx[1]/2.
-            Y_plot[0,1:]  = Y[0,:] + sim.dx[1]/2.
-            Y_plot[:,0]   = Y[0,0] - sim.dx[1]/2.
+            Y_plot[1:,1:] = Y + old_div(sim.dx[1],2.)
+            Y_plot[0,1:]  = Y[0,:] + old_div(sim.dx[1],2.)
+            Y_plot[:,0]   = Y[0,0] - old_div(sim.dx[1],2.)
 
-            Q = plt.pcolormesh(X_plot/1e3, Y_plot/1e3, to_plot, cmap=sim.cmap, 
+            Q = plt.pcolormesh(old_div(X_plot,1e3), old_div(Y_plot,1e3), to_plot, cmap=sim.cmap, 
                         vmin = vmin, vmax = vmax)
             Qs[var_cnt] += [Q]
             ttls[var_cnt] += [ttl]
@@ -124,7 +127,7 @@ def initialize_plots_animsave_2D(sim):
 
             plt.axis('tight')
 
-            if 1./1.1 <= sim.Ly/sim.Lx <= 1.1:
+            if old_div(1.,1.1) <= old_div(sim.Ly,sim.Lx) <= 1.1:
                 plt.gca().set_aspect('equal')
 
     if sim.animate == 'Anim':

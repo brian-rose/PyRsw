@@ -1,3 +1,6 @@
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -52,7 +55,7 @@ def test():
     # Gaussian initial conditions
     W  = 200.e3                # Width
     amp = 1.                  # Amplitude
-    sim.soln.h[:,:,0] += amp*np.exp(-(sim.X/W)**2 - (sim.Y/W)**2)
+    sim.soln.h[:,:,0] += amp*np.exp(-(old_div(sim.X,W))**2 - (old_div(sim.Y,W))**2)
 
     # Run the simulation
     sim.run()

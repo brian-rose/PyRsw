@@ -1,15 +1,18 @@
+from __future__ import division
 # Create Hovmuller plot at end of anim simulation
+from builtins import range
+from past.utils import old_div
 import matplotlib.pyplot as plt
 import numpy as np
 
 def plot_hov(sim):
     plt.figure()
-    t = np.arange(0,sim.end_time+sim.plott,sim.plott)/86400.
+    t = old_div(np.arange(0,sim.end_time+sim.plott,sim.plott),86400.)
 
     if sim.Ny==1:
-        x = sim.x/1e3
+        x = old_div(sim.x,1e3)
     elif sim.Nx == 1:
-        x = sim.y/1e3
+        x = old_div(sim.y,1e3)
 
     for L in range(sim.Nz):
         field = sim.hov_h[:,0,:].T - np.sum(sim.Hs[L:])

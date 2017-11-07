@@ -1,3 +1,6 @@
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -68,7 +71,7 @@ x0 = 1.*sim.Lx/2.          # Centre
 W  = 200.e3                # Width
 amp = 1.                   # Amplitude
 
-sim.soln.h[:,:,0] += amp*np.exp(-(sim.grid_y.h + sim.Ly/4.)**2/(W**2))
+sim.soln.h[:,:,0] += amp*np.exp(old_div(-(sim.grid_y.h + old_div(sim.Ly,4.))**2,(W**2)))
 #sim.soln.h[:,:,0] += amp*np.exp(-(sim.grid_x.h + sim.Lx/4.)**2/(W**2))
 
 # Run the simulation

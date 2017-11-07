@@ -1,3 +1,6 @@
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -44,6 +47,6 @@ def test():
     x0 = 1.*sim.Lx/2.
     W  = 200.e3
     amp = 1.
-    sim.soln.h[:,:,0] += amp*np.exp(-(sim.Y)**2/(W**2))
+    sim.soln.h[:,:,0] += amp*np.exp(old_div(-(sim.Y)**2,(W**2)))
 
     sim.run()

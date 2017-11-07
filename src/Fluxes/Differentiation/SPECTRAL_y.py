@@ -1,4 +1,7 @@
 from __future__ import print_function
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import numpy as np   
 try:
     import pyfftw
@@ -71,7 +74,7 @@ def SPECTRAL_y(sim):       # Set the differentiation operators
                 df = np.real(sim.iffty_h(sim.il*sim.ffty_h(f)))
                 return df
 
-            ky = 2*np.pi/sim.Ly*np.hstack([range(0,int(sim.Ny/2)), range(-int(sim.Ny/2),0)])
+            ky = 2*np.pi/sim.Ly*np.hstack([list(range(0,int(old_div(sim.Ny,2)))), list(range(-int(old_div(sim.Ny,2)),0))])
             sim.ky = ky.copy()
             sim.il = 1j*np.tile(ky.reshape((1,sim.Nky)),(sim.Nx,1))
     
@@ -95,7 +98,7 @@ def SPECTRAL_y(sim):       # Set the differentiation operators
                 df = np.real(sim.iffty_h(sim.il*sim.ffty_h(fe)))[:,:N]
                 return df
 
-            ky = np.pi/sim.Ly*np.hstack([range(0,int(sim.Ny)), range(-int(sim.Ny),0)])
+            ky = np.pi/sim.Ly*np.hstack([list(range(0,int(sim.Ny))), list(range(-int(sim.Ny),0))])
             sim.ky = ky.copy()
             sim.il = 1j*np.tile(ky.reshape((1,sim.Nky)),(sim.Nx,1))
         

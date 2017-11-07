@@ -1,3 +1,6 @@
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -65,13 +68,13 @@ for ii in range(sim.Nz):  # Set mean depths
 # First we define the jet
 Ljet = 10e3            # Jet width
 amp  = 0.1             # Elevation of free-surface in basic state
-sim.soln.h[:,:,0] += - amp*np.tanh((sim.grid_y.h)/Ljet)
-sim.soln.u[:,:,0]  =   sim.g*amp/(sim.f0*Ljet)/(np.cosh((sim.grid_y.u)/Ljet)**2)
+sim.soln.h[:,:,0] += - amp*np.tanh(old_div((sim.grid_y.h),Ljet))
+sim.soln.u[:,:,0]  =   sim.g*amp/(sim.f0*Ljet)/(np.cosh(old_div((sim.grid_y.u),Ljet))**2)
 #sim.soln.h[:,:,0] +=  amp*np.tanh((sim.grid_y.h + sim.Ly/4)/Ljet) - amp*np.tanh((sim.grid_y.h - sim.Ly/4)/Ljet)
 #sim.soln.u[:,:,0]  = -sim.g*amp/(sim.f0*Ljet)/(np.cosh((sim.grid_y.u + sim.Ly/4)/Ljet)**2) + sim.g*amp/(sim.f0*Ljet)/(np.cosh((sim.grid_y.u - sim.Ly/4)/Ljet)**2)
 
 # Then we add on a random perturbation
-sim.soln.u[:,:,0] +=  1e-3*np.exp(-((sim.grid_y.u)/Ljet)**2)*np.random.randn(*sim.grid_y.u.shape)
+sim.soln.u[:,:,0] +=  1e-3*np.exp(-(old_div((sim.grid_y.u),Ljet))**2)*np.random.randn(*sim.grid_y.u.shape)
 #sim.soln.u[:,:,0] +=  1e-3*np.exp(-((sim.grid_y.u-sim.Ly/4)/Ljet)**2)*np.random.randn(*sim.grid_y.u.shape)
 
 sim.run()                # Run the simulation

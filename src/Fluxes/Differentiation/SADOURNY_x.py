@@ -1,4 +1,6 @@
 from __future__ import print_function
+from __future__ import division
+from past.utils import old_div
 import numpy as np
 import sys
  
@@ -7,21 +9,21 @@ def ddx_none(f,dx):
 
 def ddx(f,dx):
 
-    df = (f[1:,:] - f[0:-1,:])/dx
+    df = old_div((f[1:,:] - f[0:-1,:]),dx)
             
     return df
 
 def ddx_periodic(f,dx):
 
     fs = np.concatenate([f[-1:,:],f,f[0:1,:]],axis=0)
-    df = (fs[1:,:] - fs[0:-1,:])/dx
+    df = old_div((fs[1:,:] - fs[0:-1,:]),dx)
             
     return df
 
 def ddx_walls(f,dx):
 
     fs = np.concatenate([-f[0:1,:],f,-f[-1:,:]],axis=0)
-    df = (fs[1:,:] - fs[0:-1,:])/dx
+    df = old_div((fs[1:,:] - fs[0:-1,:]),dx)
             
     return df
 

@@ -1,5 +1,8 @@
 from __future__ import print_function
 from __future__ import absolute_import
+from __future__ import division
+from builtins import range
+from past.utils import old_div
 from . import Differentiation as Diff
 import numpy as np
 import sys
@@ -66,7 +69,7 @@ def sadourny_sw_flux(sim):
         U = sim.avx_h(h)*u                  
         V = sim.avy_h(h)*v
         B = sim.gs[ii]*h + 0.5*(sim.avx_u(u**2) + sim.avy_v(v**2))
-        q = (sim.ddx_v(v,dx) - sim.ddy_u(u,dy)  + sim.F)/(sim.avy_u(sim.avx_h(h)))  
+        q = old_div((sim.ddx_v(v,dx) - sim.ddy_u(u,dy)  + sim.F),(sim.avy_u(sim.avx_h(h))))  
 
         # Flux
         #sim.curr_flux.u[:,:,ii] =   sim.avy_v(q*sim.avx_v(V)) - sim.ddx_h(B,dx)
@@ -95,7 +98,7 @@ def sadourny_sw_linear_flux(sim):
         # Compute secondary varibles
         U = Hs*u             
         V = Hs*v
-        q = sim.F/Hs
+        q = old_div(sim.F,Hs)
         B = sim.gs[ii]*h
 
         # Flux

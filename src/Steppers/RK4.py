@@ -1,3 +1,5 @@
+from __future__ import division
+from past.utils import old_div
 import numpy as np
 import sys
 
@@ -46,6 +48,6 @@ def RK4(sim):
     k4_v = flux_v + src_v
     k4_h = flux_h + src_h
 
-    sim.soln.u += -k3_u*sim.dt + (sim.dt/6.)*(k1_u + 2.*k2_u + 2.*k3_u + k4_u)
-    sim.soln.v += -k3_v*sim.dt + (sim.dt/6.)*(k1_v + 2.*k2_v + 2.*k3_v + k4_v)
-    sim.soln.h += -k3_h*sim.dt + (sim.dt/6.)*(k1_h + 2.*k2_h + 2.*k3_h + k4_h)
+    sim.soln.u += -k3_u*sim.dt + (old_div(sim.dt,6.))*(k1_u + 2.*k2_u + 2.*k3_u + k4_u)
+    sim.soln.v += -k3_v*sim.dt + (old_div(sim.dt,6.))*(k1_v + 2.*k2_v + 2.*k3_v + k4_v)
+    sim.soln.h += -k3_h*sim.dt + (old_div(sim.dt,6.))*(k1_h + 2.*k2_h + 2.*k3_h + k4_h)

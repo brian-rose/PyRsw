@@ -1,7 +1,10 @@
 from __future__ import absolute_import
+from __future__ import division
 # Initialize plot objects for anim or save
 # Assume that the field is 1-dimensional
 
+from builtins import range
+from past.utils import old_div
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -42,9 +45,9 @@ def initialize_plots_animsave_1D(sim):
                     to_plot = sim.soln.u[0:sim.Nx,0:sim.Ny,L]
 
                 if sim.Nx > 1:
-                    x = sim.grid_x.u/1e3
+                    x = old_div(sim.grid_x.u,1e3)
                 else:
-                    x = sim.grid_y.u/1e3
+                    x = old_div(sim.grid_y.u,1e3)
 
             elif var == 'v':
                 if sim.method.lower() == 'sadourny':
@@ -53,9 +56,9 @@ def initialize_plots_animsave_1D(sim):
                     to_plot = sim.soln.v[0:sim.Nx,0:sim.Ny,L]
 
                 if sim.Nx > 1:
-                    x = sim.grid_x.v/1e3
+                    x = old_div(sim.grid_x.v,1e3)
                 else:
-                    x = sim.grid_y.v/1e3
+                    x = old_div(sim.grid_y.v,1e3)
 
             elif var == 'h':
                 if sim.method.lower() == 'sadourny':
@@ -64,22 +67,22 @@ def initialize_plots_animsave_1D(sim):
                     to_plot = sim.soln.h[0:sim.Nx,0:sim.Ny,L] - sim.Hs[L]
 
                 if sim.Nx > 1:
-                    x = sim.grid_x.h/1e3
+                    x = old_div(sim.grid_x.h,1e3)
                 else:
-                    x = sim.grid_y.h/1e3
+                    x = old_div(sim.grid_y.h,1e3)
 
             elif var == 'vort':
                 to_plot = sim.ddx_v(sim.soln.v[:,:,L],sim) \
                         - sim.ddy_u(sim.soln.u[:,:,L],sim)
                 to_plot = to_plot.ravel()
                 if sim.f0 != 0:
-                    to_plot *= 1./sim.f0
+                    to_plot *= old_div(1.,sim.f0)
             elif var == 'div':
                 h = sim.soln.h[:,:,L].ravel() 
                 to_plot = sim.ddx_u(h*sim.soln.u[:,:,L],sim) \
                         + sim.ddy_v(h*sim.soln.v[:,:,L],sim)
                 if sim.f0 != 0:
-                    to_plot *= 1./sim.f0
+                    to_plot *= old_div(1.,sim.f0)
                 to_plot = to_plot.ravel()
 
             l, = plt.plot(x.ravel(), to_plot.ravel(), linewidth=2)
